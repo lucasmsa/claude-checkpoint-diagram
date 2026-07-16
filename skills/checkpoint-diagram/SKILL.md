@@ -23,6 +23,8 @@ The checkpoint is drawn in the terminal by `mermaid-ascii`, which renders a subs
 - Model a decision as a box whose label is the question, with the branches as labeled edges: `D[All rows valid?] -->|yes| E[Insert]` and `D -->|no| F[Collect errors]`.
 - No `classDef` and no `:::class`; the renderer prints them as stray boxes. Mark deferred or skipped work with a text prefix: `G[deferred: wire LiveView upload]`.
 - Avoid `{}`, `()` and quotes inside labels; keep labels short and concrete. The label sets the box width. Name a concrete action and its target, not "update code".
+- Keep it narrow. The terminal scrolls vertically but not horizontally, so width is the real constraint. Hold labels under about 35 characters (abbreviate: `update: validate + lock + save`, not a sentence); each label sets its box width.
+- Limit fan-out to at most three branches from any one node. If a step has more parallel parts, group them into one node or chain them. Prefer a tall vertical spine over a wide fan-out: a long diagram is fine, a wide one is not.
 - Cap at about 12 nodes. Collapse sub-steps and note the count if larger.
 
 ## State line (required)
