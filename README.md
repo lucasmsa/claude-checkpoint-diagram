@@ -1,41 +1,49 @@
 # checkpoint-diagram
 
-A Claude Code plugin that draws one Mermaid diagram of what changed each time Claude pauses in an auto-accept mode, and appends it to a per-day checkpoint log. When you let the agent run unattended, you get a visual catch-up instead of re-reading the transcript.
+A Claude Code plugin that draws one diagram of what changed each time Claude pauses in an auto-accept mode. It appends a Mermaid checkpoint to a per-day log and draws it in your terminal as ASCII, so unattended agent work can be reviewed at a glance.
 
-It does nothing in normal or plan mode. It only fires when you are in an auto-accept permission mode (`acceptEdits`, `bypassPermissions`, `auto`), which is exactly when you are not watching each step.
+It does nothing in normal or plan mode. It only fires in an auto-accept permission mode (`acceptEdits`, `bypassPermissions`, `auto`), which is when you are not watching each step.
 
 ## How it works
 
 1. A `Stop` hook runs at turn end. If the permission mode is not auto-accept, it exits and does nothing.
 2. Trivial turns are skipped: a short final message with a clean working tree produces no diagram.
 3. Otherwise the hook blocks the stop once and asks Claude to invoke the `checkpoint-diagram` skill.
-4. The skill picks one diagram type (flowchart, sequence, state, or dependency graph) based on what the turn did, then appends a numbered section to `.claude/checkpoints/<YYYY-MM-DD>.md`.
+4. The skill writes one flowchart to `.claude/checkpoints/<YYYY-MM-DD>.md`, then renders it in the terminal with `mermaid-ascii`.
 5. A sentinel file plus the `stop_hook_active` flag prevent any re-trigger loop.
 
-A terminal does not render Mermaid, so the checkpoint file is the render surface. Open it in an IDE Markdown preview or on GitHub, both of which render Mermaid natively.
+The terminal shows the diagram as ASCII box-art with legible labels. The same file also renders as a full Mermaid diagram in an IDE preview or on GitHub.
 
-## Example checkpoint
+## Example
 
-````markdown
-## 1. CSV import path  (14:22)
+Drawn in the terminal (ASCII, via `mermaid-ascii`):
+
+```
+┌──────────────────────────┐
+│     Add Import.run/1      │
+└────────────┬─────────────┘
+             ▼
+┌──────────────────────────┐   no
+│        Row valid?         ├───────┐
+└────────────┬─────────────┘       │
+            yes                     ▼
+             ▼              ┌────────────────┐
+┌──────────────────────┐   │ Collect error  │
+│    Cast to struct     │   └────────────────┘
+└──────────────────────┘
+```
+
+Written to the file (Mermaid, renders on GitHub):
 
 ```mermaid
 flowchart TD
-    A[Add Portfolio.Import.run/1] --> B{Row valid?}
-    B -->|yes| C[Cast to %Holding{}]
+    A[Add Portfolio.Import.run/1] --> B[Row valid?]
+    B -->|yes| C[Cast to Holding struct]
     B -->|no| D[Collect error, skip row]
-    C --> E[Bulk insert via Repo.insert_all]
-    D --> F[Return {:ok, inserted, errors}]
+    C --> E[Bulk insert]
+    D --> F[Return counts and errors]
     E --> F
-    G[Wire to ImportLive upload]:::deferred
-    F -.-> G
-    classDef deferred stroke-dasharray: 4 4;
 ```
-
-Added Portfolio.Import.run/1: validates each row, casts valid rows, bulk-inserts,
-returns counts plus per-row errors. LiveView wiring deferred.
-State: compiles and unit-tested on happy and malformed-row paths; deferred path unbuilt.
-````
 
 ## Install
 
@@ -46,46 +54,41 @@ State: compiles and unit-tested on happy and malformed-row paths; deferred path 
 /plugin install checkpoint-diagram@lucasmsa-plugins
 ```
 
-The plugin ships both the skill and the `Stop` hook, so no manual settings edit is needed.
-
 ### Manual
 
 1. Copy `skills/checkpoint-diagram/` to `~/.claude/skills/checkpoint-diagram/`.
-2. Copy `hooks/checkpoint-diagram.sh` to `~/.claude/hooks/` and `chmod +x` it.
+2. Copy `hooks/checkpoint-diagram.sh` and `hooks/render-mermaid.sh` to `~/.claude/hooks/` and `chmod +x` both.
 3. Add the hook to the `Stop` array in `~/.claude/settings.json`:
 
 ```json
 {
   "hooks": {
     "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/absolute/path/to/.claude/hooks/checkpoint-diagram.sh",
-            "timeout": 60
-          }
-        ]
-      }
+      { "hooks": [ { "type": "command", "command": "/absolute/path/to/.claude/hooks/checkpoint-diagram.sh", "timeout": 60 } ] }
     ]
   }
 }
 ```
 
+## Requirements
+
+- `jq`: the Stop hook parses its payload with it.
+- `mermaid-ascii`: draws the diagram in the terminal. Install with `go install github.com/AlexanderGrooff/mermaid-ascii@latest`. Without it, checkpoints are still written to file and only the terminal drawing is skipped.
+- `git` (optional): a clean working tree is one signal that a turn was trivial.
+
 ## Configuration
 
 - **Which modes trigger it.** Edit the `case` statement in `hooks/checkpoint-diagram.sh`. Default set: `acceptEdits`, `bypassPermissions`, `auto`, `dontAsk`.
-- **What counts as trivial.** The hook skips when the final message is under 400 characters and the working tree has no changes. Adjust the length threshold in the script.
-- **Where checkpoints land.** `.claude/checkpoints/<YYYY-MM-DD>.md` in the working directory. Add `.claude/checkpoints/` to your `.gitignore`.
+- **What counts as trivial.** The hook skips when the final message is under 400 characters and the working tree has no changes.
+- **Where checkpoints land.** `.claude/checkpoints/<YYYY-MM-DD>.md` in the working directory. Gitignore it.
 
-## Requirements
+## Diagram subset
 
-- `jq` (the hook parses the hook payload with it).
-- `git` is optional; if present, a clean working tree is used as one signal that a turn was trivial.
+`mermaid-ascii` draws a subset of Mermaid, so the skill keeps diagrams inside it (this also keeps them rendering on GitHub): `flowchart` only, plain `[box]` nodes, ASCII `-->` and `-->|label|` edges, decisions as a labeled box, no `{diamond}` shapes, no `classDef`, no `:::class`.
 
 ## Manual use
 
-Run `/checkpoint-diagram` at any time to draw a checkpoint for the current turn, regardless of permission mode.
+Run `/checkpoint-diagram` any time to draw a checkpoint for the current turn, regardless of permission mode.
 
 ## License
 
