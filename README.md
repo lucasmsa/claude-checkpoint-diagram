@@ -90,6 +90,27 @@ flowchart TD
 
 Run `/checkpoint-diagram` any time to draw a checkpoint for the current turn, regardless of permission mode.
 
+## Interactive viewer
+
+`checkpoint-view` (in `tui/`) is a Bubble Tea terminal UI for browsing a checkpoint log: scroll and pan wide diagrams, color-coded nodes (step, decision, deferred), and jump between checkpoints. It renders each section with `mermaid-ascii`. It runs in its own terminal, not inside Claude Code's captured output, so use it to explore checkpoints on demand.
+
+Build:
+
+```
+cd tui
+go build -o checkpoint-view .    # or: go install .
+```
+
+Run:
+
+```
+checkpoint-view                     # newest file in ./.claude/checkpoints/
+checkpoint-view path/to/2026-07-16.md
+checkpoint-view --dump <file>       # non-interactive: print all sections
+```
+
+Keys: arrows or `hjkl` scroll and pan, `n`/`p` switch checkpoint, `g` reset, `q` quit.
+
 ## License
 
 MIT

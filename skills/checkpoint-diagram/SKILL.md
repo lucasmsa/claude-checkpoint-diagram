@@ -50,11 +50,12 @@ Append to `<cwd>/.claude/checkpoints/<YYYY-MM-DD>.md`. Ensure `.claude/checkpoin
 
 ## Draw it in the terminal
 
-After appending, render the new diagram so it is drawn in the session:
+After appending, render the new diagram and show it inline so it is visible without expanding a tool call:
 
-    bash ~/.claude/hooks/render-mermaid.sh "<cwd>/.claude/checkpoints/<YYYY-MM-DD>.md"
+1. Run `bash ~/.claude/hooks/render-mermaid.sh "<cwd>/.claude/checkpoints/<YYYY-MM-DD>.md"` (a plugin install uses `hooks/render-mermaid.sh` under the plugin root).
+2. Include that ASCII output in your reply inside a plain fenced block, so the drawing appears in your message text and not only in the collapsed tool output.
 
-The helper draws the last mermaid block of the file. A plugin install uses `hooks/render-mermaid.sh` under the plugin root instead. If the render prints a parse complaint, the diagram left the supported subset; simplify it and render again. The file also renders as a full Mermaid diagram in an IDE preview or on GitHub.
+If the render prints a parse complaint, the diagram left the supported subset; simplify it and render again. The file also renders as a full Mermaid diagram in an IDE preview or on GitHub, and `checkpoint-view` (in the repo) opens an interactive, scrollable view of any checkpoint file.
 
 ## Worked example
 
