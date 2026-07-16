@@ -32,4 +32,6 @@ if [ -z "$block" ]; then
   exit 0
 fi
 
-printf '%s' "$block" | "$BIN" -y 1 -x 2 -p 0 -f - 2>&1
+# -p 1 gives horizontal padding around labels; the awk drops the blank internal
+# padding lines it also adds, so boxes keep the padding but stay 3 lines tall.
+printf '%s' "$block" | "$BIN" -y 1 -x 2 -p 1 -f - 2>&1 | awk '!/^ *│ *│ *$/'
