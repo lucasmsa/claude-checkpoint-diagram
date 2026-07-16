@@ -25,6 +25,7 @@ The checkpoint is drawn in the terminal by `mermaid-ascii`, which renders a subs
 - Avoid `{}`, `()` and quotes inside labels; keep labels short and concrete. The label sets the box width. Name a concrete action and its target, not "update code".
 - Keep it narrow. The terminal scrolls vertically but not horizontally, so width is the real constraint. Hold labels under about 35 characters (abbreviate: `update: validate + lock + save`, not a sentence); each label sets its box width.
 - Limit fan-out to at most three branches from any one node. If a step has more parallel parts, group them into one node or chain them. Prefer a tall vertical spine over a wide fan-out: a long diagram is fine, a wide one is not.
+- Use one starting node and a single vertical spine. Do not create several independent root nodes; mermaid-ascii places each root in its own column, which is what makes a diagram sprawl sideways. Chain parallel steps under the one spine instead.
 - Cap at about 12 nodes. Collapse sub-steps and note the count if larger.
 
 ## State line (required)
@@ -52,10 +53,10 @@ Append to `<cwd>/.claude/checkpoints/<YYYY-MM-DD>.md`. Ensure `.claude/checkpoin
 
 ## Draw it in the terminal
 
-After appending, render the new diagram and show it inline so it is visible without expanding a tool call:
+After appending, you MUST render the diagram with the helper and paste its exact output. Never hand-draw a tree, never summarize the diagram in prose, never just say it was logged: the drawing the user sees must be the verbatim renderer output.
 
 1. Run `bash ~/.claude/hooks/render-mermaid.sh "<cwd>/.claude/checkpoints/<YYYY-MM-DD>.md"` (a plugin install uses `hooks/render-mermaid.sh` under the plugin root).
-2. Include that ASCII output in your reply inside a plain fenced block, so the drawing appears in your message text and not only in the collapsed tool output.
+2. Copy its stdout verbatim into your reply inside a plain fenced block, so the box drawing appears in your message text and not only in the collapsed tool output.
 
 If the render prints a parse complaint, the diagram left the supported subset; simplify it and render again. The file also renders as a full Mermaid diagram in an IDE preview or on GitHub, and `checkpoint-view` (in the repo) opens an interactive, scrollable view of any checkpoint file.
 
