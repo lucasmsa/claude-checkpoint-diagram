@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "lucasmsa-plugins",
+  "description": "Lucas Moreira's Claude Code plugins.",
+  "owner": {
+    "name": "Lucas Moreira"
+  },
+  "plugins": [
+    {
+      "name": "checkpoint-diagram",
+      "description": "Appends a Mermaid checkpoint diagram at each pause in auto-accept modes.",
+      "author": {
+        "name": "Lucas Moreira"
+      },
+      "category": "developer-tools",
+      "source": "./"
+    }
+  ]
+}

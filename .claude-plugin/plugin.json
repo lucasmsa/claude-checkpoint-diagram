@@ -1,0 +1,23 @@
+{
+  "name": "checkpoint-diagram",
+  "displayName": "Checkpoint Diagram",
+  "version": "0.1.0",
+  "description": "Appends a Mermaid checkpoint diagram at each pause in auto-accept modes, so a large batch of unattended agent work can be reviewed at a glance.",
+  "author": {
+    "name": "Lucas Moreira",
+    "url": "https://github.com/lucasmsa"
+  },
+  "homepage": "https://github.com/lucasmsa/claude-checkpoint-diagram",
+  "repository": "https://github.com/lucasmsa/claude-checkpoint-diagram",
+  "license": "MIT",
+  "keywords": [
+    "mermaid",
+    "diagram",
+    "checkpoint",
+    "hooks",
+    "auto-accept",
+    "visualization",
+    "review"
+  ],
+  "skills": "./skills/"
+}

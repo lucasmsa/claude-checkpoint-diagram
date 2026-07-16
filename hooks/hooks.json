@@ -1,0 +1,16 @@
+{
+  "description": "Stop hook: in auto-accept permission modes, append a Mermaid checkpoint diagram before the turn ends.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/checkpoint-diagram.sh\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}
