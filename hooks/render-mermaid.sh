@@ -32,4 +32,4 @@ if [ -z "$block" ]; then
   exit 0
 fi
 
-printf '%s' "$block" | "$BIN" -y 1 -x 2 -f - 2>&1
+printf '%s' "$block" | "$BIN" -y 1 -x 2 -p 0 -f - 2>&1
