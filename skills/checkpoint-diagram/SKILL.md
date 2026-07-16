@@ -11,7 +11,7 @@ At a pause, capture what changed this turn as one flowchart, append it to the da
 
 Draw when the turn produced substantive work: several file edits, a multi-step change, a new module or flow, or a decision taken among alternatives.
 
-Skip (write nothing, say one line saying so) when the turn was a single small edit, a read-only investigation, or a question answered in prose.
+Skip silently when the turn was a single small edit, a read-only investigation, or a question answered in prose. Produce no output about checkpoints: do not draw, and do not announce that you skipped.
 
 ## Diagram rules
 
