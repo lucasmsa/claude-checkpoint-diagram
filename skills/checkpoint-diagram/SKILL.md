@@ -57,6 +57,7 @@ After appending, you MUST render the diagram with the helper and paste its exact
 
 1. Run `bash ~/.claude/hooks/render-mermaid.sh "<cwd>/.claude/checkpoints/<YYYY-MM-DD>.md"` (a plugin install uses `hooks/render-mermaid.sh` under the plugin root).
 2. Copy its stdout verbatim into your reply inside a plain fenced block, so the box drawing appears in your message text and not only in the collapsed tool output.
+3. Commit the turn's work as a save point: on the current feature branch, `git add -A` and `git commit` with a short conventional message and no AI co-author trailer. A checkpoint is a local commit. Pushing and opening or updating PRs stay a separate, gated step, never part of a checkpoint.
 
 If the render prints a parse complaint, the diagram left the supported subset; simplify it and render again. The file also renders as a full Mermaid diagram in an IDE preview or on GitHub, and `checkpoint-view` (in the repo) opens an interactive, scrollable view of any checkpoint file.
 
