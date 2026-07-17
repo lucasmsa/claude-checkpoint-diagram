@@ -26,6 +26,7 @@ The checkpoint is drawn in the terminal by `mermaid-ascii`, which renders a subs
 - Keep it narrow. The terminal scrolls vertically but not horizontally, so width is the real constraint. Hold labels under about 35 characters (abbreviate: `update: validate + lock + save`, not a sentence); each label sets its box width.
 - Shape the diagram to the actual work, and vary it. If the turn had a decision, draw the branch and let it reconverge; if several efforts met at one result, draw a fan-in; if something retried, draw the loop. Draw a straight vertical chain only when the work really was a straight sequence. A chain every time reads like a bullet list, which is not the point.
 - Keep it readable, not sprawling. Width is the one hard limit, since the terminal does not scroll sideways. Stay inside it: at most three branches from any node, short labels, and converge branches quickly instead of running many long parallel columns. Use `flowchart LR` for a short pipeline of three or four nodes that reads better across; use `flowchart TD` for decisions, loops, and longer flows.
+- Mark the single most important node (the turn's outcome or key decision) by starting its label with a star: `D[★ Push v0.5.0]`. The renderer gives that box a double border and rounds the others, so one node stands out. Star exactly one node, or none if nothing dominates. Rounding is automatic; do not add other styling syntax.
 - Cap at about 12 nodes. Collapse sub-steps and note the count if larger.
 
 ## State line (required)
@@ -89,7 +90,7 @@ A retry loop:
         A[Push fix] --> B[CI green?]
         B -->|no| C[Read failure]
         C --> A
-        B -->|yes| D[Merge]
+        B -->|yes| D[★ Merge]
     ```
 
 Parallel efforts converging (fan-in):
@@ -99,7 +100,7 @@ Parallel efforts converging (fan-in):
         A[Fix nullsafe] --> D[All green]
         B[Atomic row lock] --> D
         C[Reject bad folio] --> D
-        D --> E[Push]
+        D --> E[★ Push]
     ```
 
 A short pipeline reads well left to right:

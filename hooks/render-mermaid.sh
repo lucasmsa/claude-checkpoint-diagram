@@ -32,6 +32,12 @@ if [ -z "$block" ]; then
   exit 0
 fi
 
-# -p 1 pads labels; kept uniformly (no line-stripping) so branched and looping
-# diagrams render with consistent box heights, not only straight columns.
-printf '%s' "$block" | "$BIN" -y 1 -x 2 -p 1 -f - 2>&1
+# -p 1 pads labels uniformly (consistent box heights across branched shapes).
+# checkpoint-style.py (sibling of this script) rounds corners and double-borders
+# the node whose label starts with a star; skipped if python3 or it is missing.
+STYLE="${BASH_SOURCE[0]%/*}/checkpoint-style.py"
+if command -v python3 >/dev/null 2>&1 && [ -f "$STYLE" ]; then
+  printf '%s' "$block" | "$BIN" -y 1 -x 2 -p 1 -f - 2>&1 | python3 "$STYLE"
+else
+  printf '%s' "$block" | "$BIN" -y 1 -x 2 -p 1 -f - 2>&1
+fi

@@ -1,7 +1,7 @@
 {
   "name": "checkpoint-diagram",
   "displayName": "Checkpoint Diagram",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Appends a Mermaid checkpoint diagram at each pause in auto-accept modes, so a large batch of unattended agent work can be reviewed at a glance.",
   "author": {
     "name": "Lucas Moreira",
