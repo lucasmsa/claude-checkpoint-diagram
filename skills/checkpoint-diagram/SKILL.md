@@ -24,8 +24,8 @@ The checkpoint is drawn in the terminal by `mermaid-ascii`, which renders a subs
 - No `classDef` and no `:::class`; the renderer prints them as stray boxes. Mark deferred or skipped work with a text prefix: `G[deferred: wire LiveView upload]`.
 - Avoid `{}`, `()` and quotes inside labels; keep labels short and concrete. The label sets the box width. Name a concrete action and its target, not "update code".
 - Keep it narrow. The terminal scrolls vertically but not horizontally, so width is the real constraint. Hold labels under about 35 characters (abbreviate: `update: validate + lock + save`, not a sentence); each label sets its box width.
-- Limit fan-out to at most three branches from any one node. If a step has more parallel parts, group them into one node or chain them. Prefer a tall vertical spine over a wide fan-out: a long diagram is fine, a wide one is not.
-- Use one starting node and a single vertical spine. Do not create several independent root nodes; mermaid-ascii places each root in its own column, which is what makes a diagram sprawl sideways. Chain parallel steps under the one spine instead.
+- Shape the diagram to the actual work, and vary it. If the turn had a decision, draw the branch and let it reconverge; if several efforts met at one result, draw a fan-in; if something retried, draw the loop. Draw a straight vertical chain only when the work really was a straight sequence. A chain every time reads like a bullet list, which is not the point.
+- Keep it readable, not sprawling. Width is the one hard limit, since the terminal does not scroll sideways. Stay inside it: at most three branches from any node, short labels, and converge branches quickly instead of running many long parallel columns. Use `flowchart LR` for a short pipeline of three or four nodes that reads better across; use `flowchart TD` for decisions, loops, and longer flows.
 - Cap at about 12 nodes. Collapse sub-steps and note the count if larger.
 
 ## State line (required)
@@ -77,3 +77,34 @@ If the render prints a parse complaint, the diagram left the supported subset; s
     ```
 
     Added Portfolio.Import.run/1: validates rows, casts valid ones, bulk-inserts, returns counts plus per-row errors. State: compiles and unit-tested on happy and malformed-row paths; deferred upload path unbuilt.
+
+## Vary the shape
+
+Pick the shape that matches the turn, not a chain every time.
+
+A retry loop:
+
+    ```mermaid
+    flowchart TD
+        A[Push fix] --> B[CI green?]
+        B -->|no| C[Read failure]
+        C --> A
+        B -->|yes| D[Merge]
+    ```
+
+Parallel efforts converging (fan-in):
+
+    ```mermaid
+    flowchart TD
+        A[Fix nullsafe] --> D[All green]
+        B[Atomic row lock] --> D
+        C[Reject bad folio] --> D
+        D --> E[Push]
+    ```
+
+A short pipeline reads well left to right:
+
+    ```mermaid
+    flowchart LR
+        A[Ops] --> B[Codegen] --> C[Typed docs]
+    ```

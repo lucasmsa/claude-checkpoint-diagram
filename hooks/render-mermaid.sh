@@ -32,6 +32,6 @@ if [ -z "$block" ]; then
   exit 0
 fi
 
-# -p 1 gives horizontal padding around labels; the awk drops the blank internal
-# padding lines it also adds, so boxes keep the padding but stay 3 lines tall.
-printf '%s' "$block" | "$BIN" -y 1 -x 2 -p 1 -f - 2>&1 | awk '!/^ *│ *│ *$/'
+# -p 1 pads labels; kept uniformly (no line-stripping) so branched and looping
+# diagrams render with consistent box heights, not only straight columns.
+printf '%s' "$block" | "$BIN" -y 1 -x 2 -p 1 -f - 2>&1
