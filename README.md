@@ -4,6 +4,8 @@ A Claude Code plugin that draws one diagram of what changed each time Claude pau
 
 It does nothing in normal or plan mode. It only fires in an auto-accept permission mode (`acceptEdits`, `bypassPermissions`, `auto`), which is when you are not watching each step.
 
+![A checkpoint drawn in the terminal: a diamond flowchart with two parallel edits converging on a release](docs/checkpoint-example.png)
+
 ## How it works
 
 1. A `Stop` hook runs at turn end. If the permission mode is not auto-accept, it exits and does nothing.
